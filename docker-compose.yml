@@ -1,0 +1,52 @@
+version: '3.5'
+
+services:
+  mysql:
+    image: 'mysql:5.7'
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=devops
+    ports:
+      - "3306:3306"
+
+  backend:
+    image: rawaablh/devops-back:45
+    container_name: backend
+    ports:
+      - "8082:8082"
+    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/devops?createDatabaseIfNotExist=true&useUnicode=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "root"
+    depends_on:
+      - mysql
+    stdin_open: true
+    tty: true
+    volumes:
+      - .m2:/root/.m2
+
+  front:
+    container_name: frontend
+    build: ./
+    volumes:
+      - './:/usr/src/app'
+    ports:
+      - "8085:4200"
+    command: >
+      bash -c "npm start"
+    depends_on:
+      - backend
+
+  nginx:
+    container_name: nginx
+    build: ./
+    ports:
+      - "8089:80"
+    command: ["nginx", "-g", "daemon off;"]
+
+volumes:
+  db:
