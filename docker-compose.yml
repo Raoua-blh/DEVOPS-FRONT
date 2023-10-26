@@ -44,7 +44,7 @@ services:
     container_name: nginx
     build: ./
     ports:
-      - "8089:80"
+      - "8088:80"
     command: ["nginx", "-g", "daemon off;"]
 
 volumes:
