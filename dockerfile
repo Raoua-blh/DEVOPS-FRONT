@@ -6,7 +6,7 @@ COPY . .
 RUN npm run build --prod
 
 
-FROM nginx:alpine
+FROM nginx:latest
 # Copy the Nginx configuration
 COPY src/ngnix/etc/conf.d/default.conf /etc/nginx/conf.d/default.conf
 # Copy the build artifacts from the builder stage
